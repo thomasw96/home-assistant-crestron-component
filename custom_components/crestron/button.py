@@ -6,7 +6,7 @@ import asyncio
 
 import homeassistant.helpers.config_validation as cv
 from homeassistant.components.button import ButtonEntity
-from homeassistant.const import STATE_ON, STATE_OFF, CONF_NAME, CONF_DEVICE_CLASS
+from homeassistant.const import CONF_NAME
 from .const import HUB, DOMAIN, CONF_BUTTON_JOIN
 
 _LOGGER = logging.getLogger(__name__)

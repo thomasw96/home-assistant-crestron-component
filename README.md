@@ -4,10 +4,10 @@ Integration for Home Assistant for the Crestron XSIG symbol
 Currently supported devices:
   - Lights
   - Thermostats
-  - Shades 
+  - Shades
   - Binary Sensor
-  - Sensor 
-  - Switch 
+  - Sensor
+  - Switch
   - Media Player
   - Button (virtual)
 
@@ -28,11 +28,11 @@ Currently supported devices:
  - Connect the TX & RX of the XSIG symbol to the TCP/IP Client.
  - Attach your Analog, Serial and Digital signals to the input/output joins.
    - Note you can use multiple XSIGs attached to the same TCP/IP Client serials.  I found its simplest to use one for digitals and one for analogs/serials to keep the numbering simpler (see below).
-  
+
 > Caution: Join numbers can be confusing when mixing analog/serials and digtals on the same XSIG symbol.  Even though the symbol starts numbering the digitals at "1", the XSIG will actually send the join number corresponding to where the signal appears sequentially in the entire list of signals.
 > For example, if you have 25 analog signals followed by 10 digital signals attached to the same XSIG, the digitals will be sent as 26-35, even though they are labeled 1 - 10 on the symbol.  You can either account for this in your configuration on the HA side, or just use one symbol for Analogs and another for Digitals.
 > Since the XSIG lets you combine Analog/Serial joins on the same symbol, you can have one XSIG for Analog/Serial joins and another for digitals.  This keeps the join numbering simple.
- 
+
 ## Home Assistant configuration.yaml
 
 The `crestron:` entry is mandatory as is the `port:` definition under it.  So at a minimum, you will need:
@@ -263,7 +263,7 @@ For instance, a virtual button in a Crestron touch panel that triggers a sequenc
 When a virtual button is pressed in Home Assistant, the associated digital join will change to HIGH and change to LOW right after, generating a signal pulse that can be recognized by the control system as an event.
 
 ```yaml
-switch:
+button:
   - platform: crestron
     name: "Dummy Button"
     button_join: 70
@@ -311,8 +311,8 @@ crestron:
       attribute: volume_level
     - join: s4
       value_template: "http://homeassistant:8123{{ state_attr('media_player.volumio', 'entity_picture') }}"
-```  
- 
+```
+
  - _to_joins_: begins the section
  - _join_: for each join, list the join type and number.  The type prefix is 'a' for analog joins, 'd' for digital joins and 's' for serial joins.  So s32 would be serial join #32.  The value of this join will be set to either the state/attribute of the configured entity ID or the output of the configured template.
  - _entity_id_: the entity ID to sync this join to.  If no _attribute_ is listed the join will be set to entity's state value whenever the state changes.
@@ -322,7 +322,7 @@ crestron:
  >Note that when you specify an `entity_id`, all changes to that entity_id will result in a join update being sent to the control system.  When you specify a `value_template` a change to any referenced entity will trigger a join update.
 
  #### From Control System to HA
- 
+
  The `from_joins` section will list all the joins you want to track from the control system.  When each join changes the configured functionality will be invoked.
 
  ```yaml

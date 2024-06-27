@@ -32,7 +32,7 @@ _LOGGER = logging.getLogger(__name__)
 TO_JOINS_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_JOIN): cv.string,
-        vol.Optional(CONF_ENTITY_ID): cv.entity_id,           
+        vol.Optional(CONF_ENTITY_ID): cv.entity_id,
         vol.Optional(CONF_ATTRIBUTE): cv.string,
         vol.Optional(CONF_VALUE_TEMPLATE): cv.template
     }
@@ -80,9 +80,6 @@ async def async_setup(hass, config):
         await hub.start()
         hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STOP, hub.stop)
 
-        for platform in PLATFORMS:
-            async_load_platform(hass, platform, DOMAIN, {}, config)
-
     return True
 
 class CrestronHub:
@@ -93,6 +90,7 @@ class CrestronHub:
         self.port = config.get(CONF_PORT)
         self.context = Context()
         self.to_hub = {}
+        self.tracker = None
         self.hub.register_sync_all_joins_callback(self.sync_joins_to_hub)
         if CONF_TO_HUB in config:
             track_templates = []
@@ -128,11 +126,12 @@ class CrestronHub:
     async def start(self):
         await self.hub.listen(self.port)
 
-    def stop(self, event):
+    async def stop(self, event):
         """ remove callback(s) and template trackers """
         self.hub.remove_callback(self.join_change_callback)
-        self.tracker.async_remove()
-        self.hub.stop()
+        if self.tracker is not None:
+            self.tracker.async_remove()
+        await self.hub.stop()
 
     async def join_change_callback(self, cbtype, value):
         """ Call service for tracked join change (from_hub)"""
