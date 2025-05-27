@@ -15,6 +15,7 @@ PLATFORM_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_NAME): cv.string,
         vol.Required(CONF_BUTTON_JOIN): cv.positive_int,
+        vol.Optional(CONF_RESET_DELAY, default=0.2): cv.small_float
     },
     extra=vol.ALLOW_EXTRA,
 )
@@ -31,6 +32,7 @@ class CrestronButton(ButtonEntity):
         self._hub = hub
         self._name = config.get(CONF_NAME)
         self._button_join = config.get(CONF_BUTTON_JOIN)
+        self._reset_delay = config.get(CONF_RESET_DELAY)
 
     async def async_added_to_hass(self):
         self._hub.register_callback(self.process_callback)
@@ -60,5 +62,5 @@ class CrestronButton(ButtonEntity):
     async def async_press(self):
         # In Crestron, button presses are modelled by triggering a signal pulse on a digital join
         self._hub.set_digital(self._button_join, True)
-        await asyncio.sleep(0.2)
+        await asyncio.sleep(self._reset_delay)
         self._hub.set_digital(self._button_join, False)

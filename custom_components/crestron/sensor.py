@@ -55,6 +55,10 @@ class CrestronSensor(Entity):
         return self._name
 
     @property
+    def unique_id(self):
+        return 'sensor-' + str(self._join)
+
+    @property
     def should_poll(self):
         return False
 
