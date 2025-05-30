@@ -17,7 +17,7 @@ PLATFORM_SCHEMA = vol.Schema(
         vol.Required(CONF_VALUE_JOIN): cv.positive_int,           
         vol.Required(CONF_DEVICE_CLASS): cv.string,
         vol.Required(CONF_UNIT_OF_MEASUREMENT): cv.string,
-        vol.Required(CONF_DIVISOR): int,
+        vol.Required(CONF_DIVISOR): float,
     },
     extra=vol.ALLOW_EXTRA,
 )
@@ -35,7 +35,7 @@ class CrestronSensor(Entity):
         self._join = config.get(CONF_VALUE_JOIN)
         self._device_class = config.get(CONF_DEVICE_CLASS)
         self._unit_of_measurement = config.get(CONF_UNIT_OF_MEASUREMENT)
-        self._divisor = config.get(CONF_DIVISOR, 1)
+        self._divisor = config.get(CONF_DIVISOR, 1.0)
 
     async def async_added_to_hass(self):
         self._hub.register_callback(self.process_callback)
